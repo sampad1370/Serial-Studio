@@ -102,7 +102,7 @@ public slots:
 
 private slots:
     void lookupFinished(const QHostInfo &info);
-    void onErrorOccurred(const QAbstractSocket::SocketError socketError);
+    void onErrorOccurred(QAbstractSocket::SocketError socketError);
 
 private:
     Network();

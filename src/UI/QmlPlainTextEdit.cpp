@@ -49,7 +49,7 @@ QmlPlainTextEdit::QmlPlainTextEdit(QQuickItem *parent)
     , m_autoscroll(true)
     , m_emulateVt100(false)
     , m_copyAvailable(false)
-    , m_textEdit(new QPlainTextEdit)
+    , m_textEdit(nullptr)
     , m_terminalState(VT100_Text)
 {
     // Set item flags
@@ -85,6 +85,8 @@ QmlPlainTextEdit::QmlPlainTextEdit(QQuickItem *parent)
 
     // React to widget events
     connect(textEdit(), SIGNAL(copyAvailable(bool)), this, SLOT(setCopyAvailable(bool)));
+    connect(this, SIGNAL(renderTextPlain(QPainter *)), this,
+            SLOT(onRenderTextPlain(QPainter *)));
 }
 
 /**
@@ -92,7 +94,8 @@ QmlPlainTextEdit::QmlPlainTextEdit(QQuickItem *parent)
  */
 QmlPlainTextEdit::~QmlPlainTextEdit()
 {
-    m_textEdit->deleteLater();
+    if (m_textEdit != nullptr)
+        m_textEdit->deleteLater();
 }
 
 /**
@@ -129,8 +132,7 @@ bool QmlPlainTextEdit::event(QEvent *event)
  */
 void QmlPlainTextEdit::paint(QPainter *painter)
 {
-    if (m_textEdit && painter)
-        textEdit()->render(painter);
+    emit renderTextPlain(painter);
 }
 
 /**
@@ -138,6 +140,8 @@ void QmlPlainTextEdit::paint(QPainter *painter)
  */
 bool QmlPlainTextEdit::eventFilter(QObject *watched, QEvent *event)
 {
+    if (m_textEdit == nullptr)
+        m_textEdit = new QPlainTextEdit();
     Q_ASSERT(m_textEdit);
 
     if (watched == textEdit())
@@ -316,6 +320,8 @@ QTextDocument *QmlPlainTextEdit::document() const
  */
 QPlainTextEdit *QmlPlainTextEdit::textEdit() const
 {
+    if (m_textEdit == nullptr)
+        m_textEdit = new QPlainTextEdit();
     return m_textEdit;
 }
 
@@ -607,6 +613,12 @@ void QmlPlainTextEdit::setMaximumBlockCount(const int maxBlockCount)
     update();
 
     emit maximumBlockCountChanged();
+}
+
+void QmlPlainTextEdit::onRenderTextPlain(QPainter *painter)
+{
+    if (m_textEdit && painter)
+        textEdit()->render(painter);
 }
 
 /**

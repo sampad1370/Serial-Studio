@@ -26,6 +26,7 @@
 #include <QList>
 #include <QDateTime>
 #include <QJsonDocument>
+#include <QObject>
 
 /**
  * Defines a JSON frame information structure. We need to use this in order to be able
@@ -57,12 +58,12 @@
  *
  * Frame number is reset when the device connection state is changed.
  */
-typedef struct
+struct JFI_Object
 {
     quint64 frameNumber;
     QDateTime rxDateTime;
     QJsonDocument jsonDocument;
-} JFI_Object;
+};
 
 //----------------------------------------------------------------------------------------
 // Convenience functions

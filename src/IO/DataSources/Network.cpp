@@ -39,8 +39,10 @@ Network::Network()
     setHost("");
     setPort(defaultPort());
     setSocketType(QAbstractSocket::TcpSocket);
-    connect(&m_tcpSocket, &QTcpSocket::errorOccurred, this, &Network::onErrorOccurred);
-    connect(&m_udpSocket, &QTcpSocket::errorOccurred, this, &Network::onErrorOccurred);
+    connect(&m_tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this,
+            SIGNAL(onErrorOccurred(QAbstractSocket::SocketError)));
+    connect(&m_udpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this,
+            SIGNAL(onErrorOccurred(QAbstractSocket::SocketError)));
 }
 
 /**
@@ -294,7 +296,7 @@ void Network::lookupFinished(const QHostInfo &info)
  * This function is called whenever a socket error occurs, it disconnects the socket
  * from the host and displays the error in a message box.
  */
-void Network::onErrorOccurred(const QAbstractSocket::SocketError socketError)
+void Network::onErrorOccurred(QAbstractSocket::SocketError socketError)
 {
     QString error;
     if (socketType() == QAbstractSocket::TcpSocket)

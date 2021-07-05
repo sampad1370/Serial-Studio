@@ -26,6 +26,7 @@
 #include <QPainter>
 #include <QPlainTextEdit>
 #include <QQuickPaintedItem>
+#include <QPainter>
 
 namespace UI
 {
@@ -33,7 +34,7 @@ class QmlPlainTextEdit : public QQuickPaintedItem
 {
     // clang-format off
     Q_OBJECT
-    QML_ELEMENT
+    //QML_ELEMENT
     Q_PROPERTY(QFont font
                READ font
                WRITE setFont
@@ -114,6 +115,7 @@ signals:
     void placeholderTextChanged();
     void undoRedoEnabledChanged();
     void maximumBlockCountChanged();
+    void renderTextPlain(QPainter *);
 
 public:
     enum VT100_State
@@ -175,6 +177,7 @@ public slots:
     void setPlaceholderText(const QString &text);
     void scrollToBottom(const bool repaint = false);
     void setMaximumBlockCount(const int maxBlockCount);
+    void onRenderTextPlain(QPainter *painter);
 
 private slots:
     void updateWidgetSize();
@@ -194,7 +197,7 @@ private:
     bool m_autoscroll;
     bool m_emulateVt100;
     bool m_copyAvailable;
-    QPlainTextEdit *m_textEdit;
+    mutable QPlainTextEdit *m_textEdit;
     VT100_State m_terminalState;
 };
 }

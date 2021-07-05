@@ -182,7 +182,8 @@ void Bridge::acceptConnection()
 
     // Connect socket signals/slots
     connect(socket, &QTcpSocket::readyRead, this, &Bridge::onDataReceived);
-    connect(socket, &QTcpSocket::errorOccurred, this, &Bridge::onErrorOccurred);
+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
+            SIGNAL(onErrorOccurred(QAbstractSocket::SocketError)));
     connect(socket, &QTcpSocket::disconnected, this, &Bridge::removeConnection);
 
     // Add socket to sockets list
